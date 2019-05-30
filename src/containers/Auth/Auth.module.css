@@ -1,0 +1,73 @@
+.AuthOuter {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    min-height: 100vh;
+    background: #E1FFF5;
+    min-width: 100vw;
+}
+
+
+.Spinner {
+    margin-top: 16%;
+}
+
+
+.Auth {
+    width: 40%;
+    min-height: 64%;
+    margin: auto;
+    border-radius: 8px;
+    padding: 3rem 3rem;
+    text-align: center;
+    background: #fff;
+    box-shadow: 2px 2px 30px rgba(0, 0, 0, 0.12);
+}
+
+.Logo {
+    margin: auto;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    margin-bottom: 1.8rem;
+}
+
+
+.InputField {
+    width: 100%;
+    margin-bottom: 1.4rem !important;
+}
+
+.SubmitButton {
+    padding: .8rem 3rem !important;
+    margin-top: 1.6rem !important;
+}
+
+.ErrorContainer {
+    padding: 1rem;
+    margin: 1rem 0rem;
+    background: rgb(255, 204, 204);
+    border-radius: 4px;
+    color: rgb(255, 16, 16);
+
+}
+
+.ErrorLabel {
+    font-weight: 700;
+}
+
+.ErrorMessage {}
+
+
+@media only screen and (max-width: 700px) {
+
+    .Auth {
+        width: 90%;
+        margin: auto;
+        border-radius: 8px;
+        padding: 2rem 3rem;
+        text-align: center;
+        background: #fff;
+        box-shadow: 2px 2px 30px rgba(0, 0, 0, 0.12);
+    }
+}

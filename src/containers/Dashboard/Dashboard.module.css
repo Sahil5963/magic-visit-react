@@ -1,0 +1,10 @@
+.Dashboard {}
+
+.Card {
+    background: #fff;
+    padding: 2rem;
+}
+
+.CardPrimary {
+    background: #2DE6AA;
+}
