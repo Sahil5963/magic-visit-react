@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import Grow from "@material-ui/core/Grow";
 
 function DataCard(props) {
   const Card = styled.div`
@@ -23,11 +24,17 @@ function DataCard(props) {
     font-size: 2.4rem;
   `;
 
-  return (
+  const CardAnimated = (
     <Card>
       <PrimaryHeading>{props.primaryHeading}</PrimaryHeading>
       <SecondaryHeading>{props.secondaryHeading}</SecondaryHeading>
     </Card>
+  );
+
+  return (
+    <Grow in={true} {...{ timeout: 400 }}>
+      {CardAnimated}
+    </Grow>
   );
 }
 
