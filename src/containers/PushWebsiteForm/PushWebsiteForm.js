@@ -24,6 +24,9 @@ const styles = theme => ({
     padding: "1rem 2rem",
     minHeight: "90%"
   },
+  heading: {
+    marginBottom: "2rem"
+  },
   paper: {
     padding: theme.spacing(2),
     textAlign: "center",
@@ -60,7 +63,46 @@ const theme = createMuiTheme({
 
 class PushWebsiteForm extends Component {
   state = {
-    value: { min: 2, max: 610 }
+    rangeType: "Random",
+    rangeValue: {
+      min: 0,
+      max: 50
+    }
+  };
+
+  handleRangeType = value => {
+    this.setState(prevState => {
+      return {
+        rangeType: value
+      };
+    });
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.rangeType != prevState.rangeType) {
+      if (this.state.rangeType == "Fixed") {
+        this.setState({
+          rangeValue: 60
+        });
+      } else {
+        this.setState({
+          rangeValue: {
+            ...this.state.rangeValue,
+            min: 0,
+            max: 50
+          }
+        });
+      }
+    }
+  }
+
+  rangeSelectorValueChangeHandler = value => {
+    this.setState(prevState => {
+      return {
+        ...this.state,
+        rangeValue: value
+      };
+    });
   };
 
   render() {
@@ -72,15 +114,14 @@ class PushWebsiteForm extends Component {
           <h3 className={classes.heading}>Push website to new URL </h3>
 
           <form className={classes.formContainer} noValidate autoComplete="off">
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
               <Grid item xs={12}>
                 <TextField
-                  id="outlined-email-input"
-                  label="Email"
+                  id="website-url"
+                  label="Enter Website URL"
                   className={classes.textField}
-                  type="email"
-                  name="email"
-                  autoComplete="email"
+                  type="text"
+                  name="website-url"
                   margin="normal"
                   variant="outlined"
                   fullWidth
@@ -89,12 +130,11 @@ class PushWebsiteForm extends Component {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  id="outlined-email-input"
-                  label="Email"
+                  id="website-hits"
+                  label="Enter Total Website Hits"
                   className={classes.textField}
-                  type="email"
-                  name="email"
-                  autoComplete="email"
+                  type="text"
+                  name="website-hits"
                   margin="normal"
                   variant="outlined"
                   fullWidth
@@ -107,8 +147,8 @@ class PushWebsiteForm extends Component {
                 <RadioGroup
                   aria-label="position"
                   name="position"
-                  // value={value}
-                  // onChange={handleChange}
+                  value={this.state.rangeType}
+                  onChange={event => this.handleRangeType(event.target.value)}
                   row
                 >
                   <FormControlLabel
@@ -131,8 +171,10 @@ class PushWebsiteForm extends Component {
                   <InputRange
                     maxValue={1520}
                     minValue={0}
-                    value={this.state.value}
-                    onChange={value => this.setState({ value })}
+                    value={this.state.rangeValue}
+                    onChange={value =>
+                      this.rangeSelectorValueChangeHandler(value)
+                    }
                   />
                 </div>
               </Grid>

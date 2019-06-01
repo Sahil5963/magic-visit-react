@@ -38,17 +38,10 @@ class Dashboard extends Component {
   getChartData() {
     this.setState({
       chartData: {
-        labels: [
-          "Boston",
-          "Worcester",
-          "Springfield",
-          "Lowell",
-          "Cambridge",
-          "New Bedford"
-        ],
+        labels: ["January", "February", "March", "April", "May", "June"],
         datasets: [
           {
-            label: "Population",
+            label: "Users",
             data: [
               617594,
               181045,
@@ -91,13 +84,13 @@ class Dashboard extends Component {
               </Grid>
               <Grid item xs={12} md={4}>
                 <DataCard
-                  primaryHeading="Active Users"
+                  primaryHeading="Users This Week"
                   secondaryHeading="4354"
                 />
               </Grid>
               <Grid item xs={12} md={4}>
                 <DataCard
-                  primaryHeading="Active Users"
+                  primaryHeading="Users This Month"
                   secondaryHeading="34675"
                 />
               </Grid>

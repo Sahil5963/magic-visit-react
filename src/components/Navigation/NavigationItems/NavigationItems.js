@@ -120,7 +120,17 @@ function NavigationItems(props) {
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <ListItem button className={classes.nested}>
+          <ListItem
+            button
+            className={classes.nested}
+            classes={{
+              root: classes.listItem,
+              selected: classes.selectedListItemNested
+            }}
+            selected={props.location.pathname == "/add-new-website"}
+            component={Link}
+            to="/add-new-website"
+          >
             <ListItemText primary="Add Website" />
           </ListItem>
           <ListItem

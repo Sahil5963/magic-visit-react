@@ -52,6 +52,7 @@ class WebsiteList extends Component {
               <TableCell align="right">Fat&nbsp;(g)</TableCell>
               <TableCell align="right">Carbs&nbsp;(g)</TableCell>
               <TableCell align="right">Protein&nbsp;(g)</TableCell>
+              <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -64,6 +65,9 @@ class WebsiteList extends Component {
                 <TableCell align="right">{row.fat}</TableCell>
                 <TableCell align="right">{row.carbs}</TableCell>
                 <TableCell align="right">{row.protein}</TableCell>
+                <TableCell align="right">
+                  <span onClick={console.log(row.name)}>Actions</span>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

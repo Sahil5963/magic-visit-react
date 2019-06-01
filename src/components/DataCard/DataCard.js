@@ -12,6 +12,7 @@ function DataCard(props) {
     transition: all 0.2s;
 
     &:hover {
+      transition: all 0.2s;
       box-shadow: inset 2px 6px 20px rgba(0, 0, 0, 0.2);
       cursor: pointer;
     }

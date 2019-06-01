@@ -28,9 +28,7 @@ import Icon from "@material-ui/core/Icon";
 
 import Logo from "../../components/Logo/Logo";
 
-import Dashboard from "../Dashboard/Dashboard";
-import PushWebsiteForm from "../PushWebsiteForm/PushWebsiteForm";
-import WebsiteList from "../WebsiteList/WebsiteListMaterialTable";
+import { createMuiTheme } from "@material-ui/core/styles";
 
 const drawerWidth = 260;
 
@@ -131,7 +129,7 @@ function Layout(props) {
           >
             <MenuIcon />
           </IconButton>
-          <h4 className={classes.title}>Responsive drawer</h4>
+          <h2 className={classes.title}>Magic Visit </h2>
 
           <Button className={classes.button} component={Link} to="/logout">
             Logout
