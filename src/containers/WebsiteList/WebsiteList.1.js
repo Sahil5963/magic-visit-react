@@ -31,6 +31,12 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import purple from "@material-ui/core/colors/purple";
 
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+
 import LinearProgress from "@material-ui/core/LinearProgress";
 import axios from "axios";
 
@@ -42,7 +48,7 @@ const StyledTableCell = withStyles(theme => ({
   },
   body: {
     fontSize: 12,
-    padding: "12px 6px 12px 6px"
+    padding: "6px 6px 6px 6px"
   }
 }))(TableCell);
 
@@ -89,7 +95,7 @@ const headRows = [
   },
   {
     id: "websiteUrl",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Website URL"
   },
@@ -243,7 +249,9 @@ class WebsiteList extends Component {
     rowsPerPage: 5,
     listData: [],
     fetchingData: false,
-    deleted: false
+    deleted: false,
+    confirmDialog: false,
+    deleteId: null
   };
 
   componentDidUpdate() {
@@ -260,6 +268,8 @@ class WebsiteList extends Component {
         fetchingData: true
       });
 
+      console.log("Bearer " + this.props.toke);
+
       axios
         .get("http://13.59.190.116/api/v1/website", {
           headers: {
@@ -269,18 +279,7 @@ class WebsiteList extends Component {
         .then(res => {
           console.log(res);
 
-          websiteListData = [
-            {
-              created_at: "2019-05-29 18:07:55",
-              id: 1,
-              max_visit_time: 882,
-              min_visit_time: 0,
-              total_hits: null,
-              total_required_hits: 10000,
-              updated_at: "2019-06-01 06:07:05",
-              website_url: "https://www.ding.com"
-            }
-          ];
+          websiteListData = [...res.data.response];
 
           this.setState({
             listData: websiteListData,
@@ -302,6 +301,8 @@ class WebsiteList extends Component {
       fetchingData: true
     });
 
+    console.log("Bearer " + this.props.token);
+
     axios
       .get("http://13.59.190.116/api/v1/website", {
         headers: {
@@ -309,6 +310,7 @@ class WebsiteList extends Component {
         }
       })
       .then(res => {
+        console.log(res);
         websiteListData = [...res.data.response];
 
         this.setState({
@@ -361,7 +363,7 @@ class WebsiteList extends Component {
     });
   };
 
-  onDeleteHandler = id => {
+  onDeleteHandler = () => {
     console.log("Deleting");
 
     this.setState({
@@ -369,8 +371,8 @@ class WebsiteList extends Component {
     });
 
     axios
-      .get(
-        "http://13.59.190.116/api/v1/website/" + id,
+      .post(
+        "http://13.59.190.116/api/v1/website/" + this.state.deleteId,
         { _method: "DELETE" },
         {
           headers: {
@@ -382,11 +384,28 @@ class WebsiteList extends Component {
         console.log(res);
         this.setState({
           deleted: true,
-          fetchingData: false
+          fetchingData: false,
+          confirmDialog: false,
+          deleteId: null
         });
 
         console.log("Deleting Finish");
       });
+  };
+
+  dialogOpenHandler = id => {
+    console.log(id);
+    this.setState({
+      confirmDialog: true,
+      deleteId: id
+    });
+  };
+
+  dialogCloseHandler = () => {
+    this.setState({
+      confirmDialog: false,
+      deleteId: null
+    });
   };
 
   onUpdateHandler = id => {
@@ -410,6 +429,21 @@ class WebsiteList extends Component {
     //     this.state.rowsPerPage,
     //     this.state.listData.length - this.state.page * this.state.rowsPerPage
     //   );
+
+    let noRecord = null;
+
+    if (this.state.listData.length == 0 && !this.state.fetchingData) {
+      noRecord = (
+        <center>
+          <p style={{ padding: "1rem 0rem", fontWeight: "600" }}>
+            {" "}
+            No Record Found
+          </p>
+        </center>
+      );
+    } else {
+      noRecord = null;
+    }
 
     return (
       <ThemeProvider theme={theme}>
@@ -492,7 +526,7 @@ class WebsiteList extends Component {
                                     color: "#F84444",
                                     background: "#FFE9E9"
                                   }}
-                                  onClick={() => this.onDeleteHandler(row.id)}
+                                  onClick={() => this.dialogOpenHandler(row.id)}
                                 >
                                   <DeleteIcon />
                                 </IconButton>
@@ -506,6 +540,37 @@ class WebsiteList extends Component {
                                 >
                                   <EditIcon />
                                 </IconButton>
+
+                                <Dialog
+                                  open={this.state.confirmDialog}
+                                  onClose={this.state.confirmDialog}
+                                  aria-labelledby="alert-dialog-title"
+                                  aria-describedby="alert-dialog-description"
+                                >
+                                  <DialogTitle id="alert-dialog-title">
+                                    {"Delete This Record"}
+                                  </DialogTitle>
+                                  <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">
+                                      Are you sure you want to delete
+                                    </DialogContentText>
+                                  </DialogContent>
+                                  <DialogActions>
+                                    <Button
+                                      onClick={() => this.dialogCloseHandler()}
+                                      color="primary"
+                                    >
+                                      Disagree
+                                    </Button>
+                                    <Button
+                                      onClick={() => this.onDeleteHandler()}
+                                      color="primary"
+                                      autoFocus
+                                    >
+                                      Agree
+                                    </Button>
+                                  </DialogActions>
+                                </Dialog>
                               </div>
                             </StyledTableCell>
                           </StyledTableRow>
@@ -519,6 +584,8 @@ class WebsiteList extends Component {
                   </TableBody>
                 </Table>
               </div>
+
+              {noRecord}
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
@@ -542,6 +609,12 @@ class WebsiteList extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    token: state.auth.token
+  };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
     onUpdateRecord: id => dispatch(actions.updateRecord(id))
@@ -550,7 +623,7 @@ const mapDispatchToProps = dispatch => {
 
 export default withRouter(
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
   )(WebsiteList)
 );

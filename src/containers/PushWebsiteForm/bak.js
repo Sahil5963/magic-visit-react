@@ -8,7 +8,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
-import { connect } from "react-redux";
 
 import "react-input-range/lib/css/index.css";
 
@@ -16,22 +15,6 @@ import InputRange from "react-input-range";
 
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import axios from "axios";
-
-import Snackbar from "@material-ui/core/Snackbar";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-
-import clsx from "clsx";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import ErrorIcon from "@material-ui/icons/Error";
-import InfoIcon from "@material-ui/icons/Info";
-import green from "@material-ui/core/colors/green";
-import amber from "@material-ui/core/colors/amber";
-import SnackbarContent from "@material-ui/core/SnackbarContent";
-import WarningIcon from "@material-ui/icons/Warning";
-import { makeStyles } from "@material-ui/core/styles";
 
 const styles = theme => ({
   root: {
@@ -78,80 +61,13 @@ const theme = createMuiTheme({
   }
 });
 
-const variantIcon = {
-  success: CheckCircleIcon,
-  warning: WarningIcon,
-  error: ErrorIcon,
-  info: InfoIcon
-};
-
-const useStyles1 = makeStyles(theme => ({
-  success: {
-    backgroundColor: green[600]
-  },
-  error: {
-    backgroundColor: theme.palette.error.dark
-  },
-  info: {
-    backgroundColor: theme.palette.primary.dark
-  },
-  warning: {
-    backgroundColor: amber[700]
-  },
-  icon: {
-    fontSize: 20
-  },
-  iconVariant: {
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  message: {
-    display: "flex",
-    alignItems: "center"
-  }
-}));
-
-function MySnackbarContentWrapper(props) {
-  const classes = useStyles1();
-  const { className, message, onClose, variant, ...other } = props;
-  const Icon = variantIcon[variant];
-
-  return (
-    <SnackbarContent
-      className={clsx(classes[variant], className)}
-      ContentProps={{
-        "aria-describedby": "message-id"
-      }}
-      message={<span id="message-id">{props.message}</span>}
-      action={[
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          className={classes.close}
-          onClick={props.closeDisplayMessage}
-        >
-          <CloseIcon />
-        </IconButton>
-      ]}
-      {...other}
-    />
-  );
-}
-
 class PushWebsiteForm extends Component {
   state = {
-    websiteUrl: "",
-    websiteHits: "",
     rangeType: "Random",
     rangeValue: {
       min: 0,
       max: 50
     },
-    submittingData: false,
-    submittingDataSuccess: false,
-    submittingDataMessage: null,
-    displayMessage: false,
     urlValid: true,
     urlValidMessage: null
   };
@@ -182,62 +98,6 @@ class PushWebsiteForm extends Component {
     }
   }
 
-  showDisplayMessage = () => {
-    this.setState({
-      showDisplayMessage: true
-    });
-  };
-
-  closeDisplayMessage = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    this.setState({
-      displayMessage: false
-    });
-  };
-
-  inputChangeHandler = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
-  };
-
-  inputUrlChangeHandler = e => {
-    const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-    const regex = new RegExp(expression);
-
-    this.setState({
-      [e.target.name]: e.target.value
-    });
-
-    if (e.target.value.match(regex)) {
-      this.setState({
-        urlValid: true,
-        urlValidMessage: "URL is valid"
-      });
-    } else {
-      this.setState({
-        urlValid: false,
-        urlValidMessage: "Enter Valid URL"
-      });
-    }
-  };
-
-  onResetHandler = () => {
-    this.setState({
-      websiteUrl: "",
-      websiteHits: "",
-      rangeType: "Random",
-      rangeValue: {
-        min: 0,
-        max: 50
-      }
-    });
-  };
-
-  onSubmitHandler = () => {};
-
   rangeSelectorValueChangeHandler = value => {
     this.setState(prevState => {
       return {
@@ -250,67 +110,37 @@ class PushWebsiteForm extends Component {
   render() {
     const { classes } = this.props;
 
-    let submittingData = null;
-
-    if (this.state.submittingData) {
-      submittingData = <LinearProgress />;
-    } else {
-      submittingData = null;
-    }
-
     return (
       <ThemeProvider theme={theme}>
-        {submittingData}
-
         <div className={classes.root}>
-          <h3 className={classes.heading}>Add New Website </h3>
-          <Snackbar
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "center"
-            }}
-            open={this.state.displayMessage}
-            autoHideDuration={6000}
-            onClose={this.closeDisplayMessage}
-          >
-            <MySnackbarContentWrapper
-              closeDisplayMessage={this.closeDisplayMessage}
-              variant={this.state.submittingDataSuccess ? "success" : "error"}
-              message={this.state.submittingDataMessage}
-            />
-          </Snackbar>
+          <h3 className={classes.heading}>Push website to new URL </h3>
+
           <form className={classes.formContainer} noValidate autoComplete="off">
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <TextField
-                  id="websiteUrl"
-                  error={!this.state.urlValid}
-                  helperText={this.state.urlValidMessage}
+                  id="website-url"
                   label="Enter Website URL"
                   className={classes.textField}
                   type="text"
-                  name="websiteUrl"
+                  name="website-url"
                   margin="normal"
                   variant="outlined"
                   fullWidth
                   margin="none"
-                  value={this.state.websiteUrl}
-                  onChange={this.inputUrlChangeHandler}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  id="websiteHits"
+                  id="website-hits"
                   label="Enter Total Website Hits"
                   className={classes.textField}
                   type="text"
-                  name="websiteHits"
+                  name="website-hits"
                   margin="normal"
                   variant="outlined"
                   fullWidth
                   margin="none"
-                  value={this.state.websiteHits}
-                  onChange={this.inputChangeHandler}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -341,8 +171,7 @@ class PushWebsiteForm extends Component {
                 <label className={classes.label}>Select Range :</label>
                 <div className={classes.rangeSelector}>
                   <InputRange
-                    maxValue={600}
-                    formatLabel={value => `${value} Sec`}
+                    maxValue={1520}
                     minValue={0}
                     value={this.state.rangeValue}
                     onChange={value =>
@@ -357,7 +186,6 @@ class PushWebsiteForm extends Component {
                   color="primary"
                   size="large"
                   className={(classes.button, classes.submitButton)}
-                  onClick={this.onSubmitHandler}
                 >
                   Submit
                 </Button>
@@ -365,7 +193,6 @@ class PushWebsiteForm extends Component {
                   variant="contained"
                   className={classes.button}
                   size="large"
-                  onClick={() => this.onResetHandler()}
                 >
                   Reset
                 </Button>
@@ -380,10 +207,4 @@ class PushWebsiteForm extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    token: state.auth.token
-  };
-};
-
-export default withStyles(styles)(connect(mapStateToProps)(PushWebsiteForm));
+export default withStyles(styles)(PushWebsiteForm);

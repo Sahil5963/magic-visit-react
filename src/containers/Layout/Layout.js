@@ -129,7 +129,7 @@ function Layout(props) {
           >
             <MenuIcon />
           </IconButton>
-          <h2 className={classes.title}>Magic Visit </h2>
+          <h3 className={classes.title}>Magic Visit </h3>
 
           <Button className={classes.button} component={Link} to="/logout">
             Logout

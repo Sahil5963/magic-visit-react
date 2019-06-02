@@ -151,7 +151,9 @@ class AddNewWebsite extends Component {
     submittingData: false,
     submittingDataSuccess: false,
     submittingDataMessage: null,
-    displayMessage: false
+    displayMessage: false,
+    urlValid: true,
+    urlValidMessage: null
   };
 
   handleRangeType = value => {
@@ -201,6 +203,27 @@ class AddNewWebsite extends Component {
     });
   };
 
+  inputUrlChangeHandler = e => {
+    const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+    const regex = new RegExp(expression);
+
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+
+    if (e.target.value.match(regex)) {
+      this.setState({
+        urlValid: true,
+        urlValidMessage: "URL is valid"
+      });
+    } else {
+      this.setState({
+        urlValid: false,
+        urlValidMessage: "Enter Valid URL"
+      });
+    }
+  };
+
   onResetHandler = () => {
     this.setState({
       websiteUrl: "",
@@ -235,6 +258,8 @@ class AddNewWebsite extends Component {
       min_visit_time: minRange,
       total_required_hits: Number(this.state.websiteHits)
     };
+
+    console.log("Bearer " + this.props.token);
 
     axios
       .post("http://13.59.190.116/api/v1/website", addWebsiteData, {
@@ -319,6 +344,8 @@ class AddNewWebsite extends Component {
               <Grid item xs={12}>
                 <TextField
                   id="websiteUrl"
+                  error={!this.state.urlValid}
+                  helperText={this.state.urlValidMessage}
                   label="Enter Website URL"
                   className={classes.textField}
                   type="text"
@@ -328,7 +355,7 @@ class AddNewWebsite extends Component {
                   fullWidth
                   margin="none"
                   value={this.state.websiteUrl}
-                  onChange={this.inputChangeHandler}
+                  onChange={this.inputUrlChangeHandler}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -374,7 +401,8 @@ class AddNewWebsite extends Component {
                 <label className={classes.label}>Select Range :</label>
                 <div className={classes.rangeSelector}>
                   <InputRange
-                    maxValue={1520}
+                    maxValue={600}
+                    formatLabel={value => `${value} Sec`}
                     minValue={0}
                     value={this.state.rangeValue}
                     onChange={value =>

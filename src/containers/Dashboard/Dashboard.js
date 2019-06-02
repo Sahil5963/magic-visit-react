@@ -6,6 +6,16 @@ import color from "@material-ui/core/colors/lightGreen";
 
 import DataCard from "../../components/DataCard/DataCard";
 import Chart from "../../components/Chart/Chart";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
+
+import { connect } from "react-redux";
+
+import io from "socket.io-client";
+
+import axios from "axios";
 
 const styles = theme => ({
   root: {
@@ -26,13 +36,69 @@ const styles = theme => ({
   }
 });
 
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: "#006FFF" }
+  }
+});
+
 class Dashboard extends Component {
   state = {
-    chartData: {}
+    chartData: {},
+    totalWebsites: null,
+    totalHits: null,
+    fetchingTotalWebsites: false,
+    fetchingTotalHits: false
   };
+
+  componentWillUpdate() {
+    console.log("Component Will Update");
+
+    const socket = io("http://13.59.190.116:3000");
+
+    socket.on("update", data => {
+      console.log("Update");
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnect");
+    });
+
+    socket.on("reconnect", () => {
+      console.log("Reconnect");
+    });
+  }
 
   componentWillMount() {
     this.getChartData();
+
+    this.setState({ fetchingTotalWebsites: true, fetchingTotalHits: true });
+
+    axios
+      .get("http://13.59.190.116/api/v1/fetchTotalWebsites", {
+        headers: {
+          Authorization: "Bearer " + this.props.token
+        }
+      })
+      .then(res => {
+        this.setState({
+          totalWebsites: res.data.response.count,
+          fetchingTotalWebsites: false
+        });
+      });
+
+    axios
+      .get("http://13.59.190.116/api/v1/fetchTotalHits", {
+        headers: {
+          Authorization: "Bearer " + this.props.token
+        }
+      })
+      .then(res => {
+        this.setState({
+          totalHits: res.data.response.count,
+          fetchingTotalHits: false
+        });
+      });
   }
 
   getChartData() {
@@ -70,44 +136,70 @@ class Dashboard extends Component {
 
   render() {
     const { classes } = this.props;
-    return (
-      <div className={classes.root}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={4}>
-                <DataCard
-                  primary
-                  primaryHeading="Active Users"
-                  secondaryHeading="45554"
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <DataCard
-                  primaryHeading="Users This Week"
-                  secondaryHeading="4354"
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <DataCard
-                  primaryHeading="Users This Month"
-                  secondaryHeading="34675"
-                />
-              </Grid>
-            </Grid>
-          </Grid>
 
-          <Grid item xs={12} md={12}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={12} className={classes.chartContainer}>
-                <Chart chartData={this.state.chartData} />
+    return (
+      <ThemeProvider theme={theme}>
+        <div className={classes.root}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={4}>
+                  <DataCard
+                    primary
+                    primaryHeading="Active Users"
+                    secondaryHeading="234"
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <DataCard
+                    primaryHeading="Total Websites"
+                    secondaryHeading={
+                      this.state.fetchingTotalWebsites ? (
+                        <CircularProgress />
+                      ) : (
+                        this.state.totalWebsites
+                      )
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <DataCard
+                    primaryHeading="Users This Month"
+                    secondaryHeading={
+                      this.state.fetchingTotalHits ? (
+                        <CircularProgress />
+                      ) : (
+                        this.state.totalHits
+                      )
+                    }
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid item xs={12} md={12}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={12} className={classes.chartContainer}>
+                  <Chart chartData={this.state.chartData} />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </div>
+        </div>
+      </ThemeProvider>
     );
   }
 }
 
-export default withStyles(styles)(Dashboard);
+const mapStateToProps = state => {
+  return {
+    token: state.auth.token
+  };
+};
+
+export default withStyles(styles)(
+  connect(
+    mapStateToProps,
+    null
+  )(Dashboard)
+);
