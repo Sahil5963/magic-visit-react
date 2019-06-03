@@ -106,7 +106,7 @@ function Layout(props) {
   const drawer = (
     <div>
       <div className={classes.logo}>
-        <Logo color1="#fff" color2="#2DE6AA" height="40px" />
+        <Logo color1="#fff" color2="#2DE6AA" height="60px" />
       </div>
       <NavigationItems />
     </div>

@@ -84,31 +84,31 @@ class Dashboard extends Component {
 
     this.setState({ fetchingTotalWebsites: true, fetchingTotalHits: true });
 
-    // axios
-    //   .get("http://13.59.190.116/api/v1/fetchTotalWebsites", {
-    //     headers: {
-    //       Authorization: "Bearer " + this.props.token
-    //     }
-    //   })
-    //   .then(res => {
-    //     this.setState({
-    //       totalWebsites: res.data.response.count,
-    //       fetchingTotalWebsites: false
-    //     });
-    //   });
+    axios
+      .get("http://13.59.190.116/api/v1/fetchTotalWebsites", {
+        headers: {
+          Authorization: "Bearer " + this.props.token
+        }
+      })
+      .then(res => {
+        this.setState({
+          totalWebsites: res.data.response.count,
+          fetchingTotalWebsites: false
+        });
+      });
 
-    // axios
-    //   .get("http://13.59.190.116/api/v1/fetchTotalHits", {
-    //     headers: {
-    //       Authorization: "Bearer " + this.props.token
-    //     }
-    //   })
-    //   .then(res => {
-    //     this.setState({
-    //       totalHits: res.data.response.count,
-    //       fetchingTotalHits: false
-    //     });
-    //   });
+    axios
+      .get("http://13.59.190.116/api/v1/fetchTotalHits", {
+        headers: {
+          Authorization: "Bearer " + this.props.token
+        }
+      })
+      .then(res => {
+        this.setState({
+          totalHits: res.data.response.count,
+          fetchingTotalHits: false
+        });
+      });
   }
 
   getChartData() {

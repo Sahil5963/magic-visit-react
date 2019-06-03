@@ -154,7 +154,7 @@ class Auth extends Component {
           {authRedirect}
           <div className={classes.Auth}>
             <div className={classes.Logo}>
-              <Logo color1="#232931" color2="#2DE6AA" height="40px" />
+              <Logo color1="#232931" color2="#2DE6AA" height="80px" />
             </div>
             {errorMessage}
             {form}

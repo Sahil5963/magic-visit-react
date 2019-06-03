@@ -9,8 +9,7 @@ const logo = props => {
     <div className={classes.Logo}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="128.715"
-        height="54.201"
+        height={props.height}
         viewBox="0 0 128.715 54.201"
       >
         <g
@@ -45,7 +44,7 @@ const logo = props => {
                   data-name="Path 29"
                   d="M10.886,0l.67,6.132,5.431,2.925-5.625,2.532-1.1,6.069L6.112,13.09,0,13.916,3.062,8.562.387,3,6.426,4.262Z"
                   transform="translate(4.537 4.472)"
-                  fill="#2de6aa"
+                  fill={color2}
                 />
               </g>
             </g>
@@ -67,7 +66,7 @@ const logo = props => {
           <text
             id="Visit"
             transform="translate(187.826 69.449)"
-            fill="#2de6aa"
+            fill={color2}
             font-size="22"
             font-family="Nunito-Regular, Nunito"
           >
@@ -78,7 +77,7 @@ const logo = props => {
           <text
             id="Magic"
             transform="translate(122 69.449)"
-            fill="#fff"
+            fill={color1}
             font-size="22"
             font-family="Nunito-Bold, Nunito"
             font-weight="700"
