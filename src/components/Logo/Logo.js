@@ -9,59 +9,84 @@ const logo = props => {
     <div className={classes.Logo}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        height={props.height}
-        viewBox="0 0 73.718 36.864"
+        width="128.715"
+        height="54.201"
+        viewBox="0 0 128.715 54.201"
       >
-        <g id="kik" transform="translate(-60.032 -80.022)">
-          <path
-            id="Path_7"
-            data-name="Path 7"
-            d="M311.979,148.534a4.225,4.225,0,1,1-4.244,4.225A4.234,4.234,0,0,1,311.979,148.534Z"
-            transform="translate(-182.473 -50.47)"
-            fill="#4ecca3"
-          />
-          <path
-            id="Path_8"
-            data-name="Path 8"
-            d="M172.593,152.035H164.9l.008-19.131,7.682.027Z"
-            transform="translate(-77.254 -38.956)"
-            fill={color1}
-          />
-          <path
-            id="Path_9"
-            data-name="Path 9"
-            d="M91.728,109.171a3.858,3.858,0,1,1-3.8,3.858A3.828,3.828,0,0,1,91.728,109.171Zm0-19.17a3.859,3.859,0,1,1-3.8,3.858A3.829,3.829,0,0,1,91.728,90ZM64.1,109.266a3.809,3.809,0,1,1-3.756,3.809A3.782,3.782,0,0,1,64.1,109.266Zm.017-29.244a3.852,3.852,0,1,1-3.771,3.851A3.811,3.811,0,0,1,64.12,80.022Z"
-            transform="translate(-0.232)"
-            fill={color1}
-          />
-          <path
-            id="Path_10"
-            data-name="Path 10"
-            d="M60.033,95.149l7.667.081.038,14.122,7.1-6.941L80.5,107.69,75.5,112.607l6.979,9.408-6.224,4.517-6.65-8.889-1.936,1.8v5l-7.638-.3V95.149Z"
-            transform="translate(0 -11.143)"
-            fill={color1}
-          />
-          <path
-            id="Path_11"
-            data-name="Path 11"
-            d="M116.321,90a3.849,3.849,0,1,1-3.836,3.849A3.842,3.842,0,0,1,116.321,90Zm1.55,19.147a3.867,3.867,0,1,1-3.813,3.867A3.84,3.84,0,0,1,117.871,109.15Zm25.322.116a3.809,3.809,0,1,1-3.756,3.809A3.782,3.782,0,0,1,143.193,109.266Zm.016-29.244a3.852,3.852,0,1,1-3.771,3.851A3.812,3.812,0,0,1,143.209,80.022Z"
-            transform="translate(-38.64)"
-            fill={color1}
-          />
-          <path
-            id="Path_12"
-            data-name="Path 12"
-            d="M214.515,95.149l7.667.081.038,14.122,7.1-6.941,5.66,5.278-4.993,4.917,6.979,9.408-6.224,4.517-6.649-8.889-1.936,1.8v5l-7.639-.3V95.149Z"
-            transform="translate(-113.801 -11.143)"
-            fill={color1}
-          />
-          <path
-            id="Path_13"
-            data-name="Path 13"
-            d="M270.8,117.923a3.849,3.849,0,1,1-3.836,3.849,3.842,3.842,0,0,1,3.836-3.849Zm1.55,19.147a3.867,3.867,0,1,1-3.813,3.867A3.84,3.84,0,0,1,272.353,137.07Z"
-            transform="translate(-152.441 -27.92)"
-            fill={color1}
-          />
+        <g
+          id="Group_123"
+          data-name="Group 123"
+          transform="translate(-122 -23.248)"
+        >
+          <g
+            id="Group_122"
+            data-name="Group 122"
+            transform="translate(257.035 39.216) rotate(141)"
+          >
+            <g
+              id="Group_121"
+              data-name="Group 121"
+              transform="translate(8.784 0)"
+            >
+              <g
+                id="Group_120"
+                data-name="Group 120"
+                transform="translate(0 0)"
+              >
+                <path
+                  id="Path_28"
+                  data-name="Path 28"
+                  d="M17.053,0,18.1,9.606l8.508,4.581L17.8,18.153,16.071,27.66l-6.5-7.155L0,21.8l4.8-8.387L.607,4.705l9.459,1.971Z"
+                  transform="translate(0 0)"
+                  fill="#32ac85"
+                />
+                <path
+                  id="Path_29"
+                  data-name="Path 29"
+                  d="M10.886,0l.67,6.132,5.431,2.925-5.625,2.532-1.1,6.069L6.112,13.09,0,13.916,3.062,8.562.387,3,6.426,4.262Z"
+                  transform="translate(4.537 4.472)"
+                  fill="#2de6aa"
+                />
+              </g>
+            </g>
+            <path
+              id="Path_37"
+              data-name="Path 37"
+              d="M3.6,0,4.877,2.329,7.207,3.6,4.877,4.877,3.6,7.206,2.329,4.877,0,3.6,2.329,2.329Z"
+              transform="translate(0 10.044)"
+              fill="#c1ffeb"
+            />
+            <path
+              id="Path_36"
+              data-name="Path 36"
+              d="M3.5,0,4.736,2.262,7,3.5,4.736,4.736,3.5,7,2.262,4.736,0,3.5,2.262,2.262Z"
+              transform="translate(30.407 23.948) rotate(-21)"
+              fill="#c5ffec"
+            />
+          </g>
+          <text
+            id="Visit"
+            transform="translate(187.826 69.449)"
+            fill="#2de6aa"
+            font-size="22"
+            font-family="Nunito-Regular, Nunito"
+          >
+            <tspan x="0" y="0">
+              Visit
+            </tspan>
+          </text>
+          <text
+            id="Magic"
+            transform="translate(122 69.449)"
+            fill="#fff"
+            font-size="22"
+            font-family="Nunito-Bold, Nunito"
+            font-weight="700"
+          >
+            <tspan x="0" y="0">
+              Magic
+            </tspan>
+          </text>
         </g>
       </svg>
     </div>

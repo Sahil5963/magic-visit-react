@@ -33,6 +33,8 @@ import SnackbarContent from "@material-ui/core/SnackbarContent";
 import WarningIcon from "@material-ui/icons/Warning";
 import { makeStyles } from "@material-ui/core/styles";
 
+import io from "socket.io-client";
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -142,12 +144,7 @@ function MySnackbarContentWrapper(props) {
 class PushWebsiteForm extends Component {
   state = {
     websiteUrl: "",
-    websiteHits: "",
-    rangeType: "Random",
-    rangeValue: {
-      min: 0,
-      max: 50
-    },
+    totalVisitTime: 40,
     submittingData: false,
     submittingDataSuccess: false,
     submittingDataMessage: null,
@@ -155,32 +152,6 @@ class PushWebsiteForm extends Component {
     urlValid: true,
     urlValidMessage: null
   };
-
-  handleRangeType = value => {
-    this.setState(prevState => {
-      return {
-        rangeType: value
-      };
-    });
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.rangeType != prevState.rangeType) {
-      if (this.state.rangeType == "Fixed") {
-        this.setState({
-          rangeValue: 60
-        });
-      } else {
-        this.setState({
-          rangeValue: {
-            ...this.state.rangeValue,
-            min: 0,
-            max: 50
-          }
-        });
-      }
-    }
-  }
 
   showDisplayMessage = () => {
     this.setState({
@@ -194,12 +165,6 @@ class PushWebsiteForm extends Component {
     }
     this.setState({
       displayMessage: false
-    });
-  };
-
-  inputChangeHandler = e => {
-    this.setState({
-      [e.target.name]: e.target.value
     });
   };
 
@@ -227,22 +192,62 @@ class PushWebsiteForm extends Component {
   onResetHandler = () => {
     this.setState({
       websiteUrl: "",
-      websiteHits: "",
-      rangeType: "Random",
-      rangeValue: {
-        min: 0,
-        max: 50
-      }
+      totalVisitTime: 40,
+      urlValid: true
     });
   };
 
-  onSubmitHandler = () => {};
+  componentDidMount() {}
+
+  onPushWebsiteHandler = () => {
+    const socket = io("http://13.59.190.116:3000");
+
+    if (this.state.urlValid && this.state.websiteUrl != "") {
+      this.setState({
+        submittingData: true
+      });
+
+      const pushWebsite = {
+        website_url: this.state.websiteUrl,
+        visiting_time: this.state.totalVisitTime
+      };
+
+      console.log({ response: { ...pushWebsite } });
+
+      socket.emit("sendPushWebsite", { response: { ...pushWebsite } });
+
+      this.setState({
+        submittingDataSuccess: true,
+        submittingDataMessage: "Website Pushed Succesfully",
+        displayMessage: true,
+        submittingData: false
+      });
+
+      console.log({ response: { ...pushWebsite } });
+
+      this.onResetHandler();
+
+      console.log({ response: { ...pushWebsite } });
+    } else if (this.state.websiteUrl == "") {
+      this.setState({
+        submittingDataSuccess: false,
+        submittingDataMessage: "Enter a valid URL",
+        displayMessage: true
+      });
+    } else {
+      this.setState({
+        submittingDataSuccess: false,
+        submittingDataMessage: "Enter a valid URL",
+        displayMessage: true
+      });
+    }
+  };
 
   rangeSelectorValueChangeHandler = value => {
     this.setState(prevState => {
       return {
         ...this.state,
-        rangeValue: value
+        totalVisitTime: value
       };
     });
   };
@@ -298,53 +303,14 @@ class PushWebsiteForm extends Component {
                   onChange={this.inputUrlChangeHandler}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id="websiteHits"
-                  label="Enter Total Website Hits"
-                  className={classes.textField}
-                  type="text"
-                  name="websiteHits"
-                  margin="normal"
-                  variant="outlined"
-                  fullWidth
-                  margin="none"
-                  value={this.state.websiteHits}
-                  onChange={this.inputChangeHandler}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label className={classes.label}>Select timing :</label>
-
-                <RadioGroup
-                  aria-label="position"
-                  name="position"
-                  value={this.state.rangeType}
-                  onChange={event => this.handleRangeType(event.target.value)}
-                  row
-                >
-                  <FormControlLabel
-                    value="Random"
-                    control={<Radio color="primary" />}
-                    label="Random"
-                    labelPlacement="end"
-                  />
-                  <FormControlLabel
-                    value="Fixed"
-                    control={<Radio color="primary" />}
-                    label="Fixed"
-                    labelPlacement="end"
-                  />
-                </RadioGroup>
-              </Grid>
               <Grid item xs={12} className={classes.rangeSection}>
-                <label className={classes.label}>Select Range :</label>
+                <label className={classes.label}>Select Visiting Time :</label>
                 <div className={classes.rangeSelector}>
                   <InputRange
                     maxValue={600}
                     formatLabel={value => `${value} Sec`}
                     minValue={0}
-                    value={this.state.rangeValue}
+                    value={this.state.totalVisitTime}
                     onChange={value =>
                       this.rangeSelectorValueChangeHandler(value)
                     }
@@ -357,7 +323,7 @@ class PushWebsiteForm extends Component {
                   color="primary"
                   size="large"
                   className={(classes.button, classes.submitButton)}
-                  onClick={this.onSubmitHandler}
+                  onClick={this.onPushWebsiteHandler}
                 >
                   Submit
                 </Button>

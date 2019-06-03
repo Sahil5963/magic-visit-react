@@ -45,27 +45,37 @@ const theme = createMuiTheme({
 class Dashboard extends Component {
   state = {
     chartData: {},
+    activeUsers: null,
     totalWebsites: null,
     totalHits: null,
     fetchingTotalWebsites: false,
-    fetchingTotalHits: false
+    fetchingTotalHits: false,
+    fetchingActiveUsers: false
   };
 
   componentWillUpdate() {
     console.log("Component Will Update");
+  }
 
+  componentDidMount() {
     const socket = io("http://13.59.190.116:3000");
 
-    socket.on("update", data => {
-      console.log("Update");
+    this.setState({
+      fetchingActiveUsers: true
     });
 
-    socket.on("disconnect", () => {
-      console.log("Disconnect");
+    socket.on("connected", function(data) {
+      console.log(data);
+      socket.emit("getActiveUser", { type: "getActiveUser" });
     });
 
-    socket.on("reconnect", () => {
-      console.log("Reconnect");
+    socket.on("showActiveUser", data => {
+      console.log(data); //
+
+      this.setState({
+        activeUsers: data.visitor_count,
+        fetchingActiveUsers: false
+      });
     });
   }
 
@@ -74,31 +84,31 @@ class Dashboard extends Component {
 
     this.setState({ fetchingTotalWebsites: true, fetchingTotalHits: true });
 
-    axios
-      .get("http://13.59.190.116/api/v1/fetchTotalWebsites", {
-        headers: {
-          Authorization: "Bearer " + this.props.token
-        }
-      })
-      .then(res => {
-        this.setState({
-          totalWebsites: res.data.response.count,
-          fetchingTotalWebsites: false
-        });
-      });
+    // axios
+    //   .get("http://13.59.190.116/api/v1/fetchTotalWebsites", {
+    //     headers: {
+    //       Authorization: "Bearer " + this.props.token
+    //     }
+    //   })
+    //   .then(res => {
+    //     this.setState({
+    //       totalWebsites: res.data.response.count,
+    //       fetchingTotalWebsites: false
+    //     });
+    //   });
 
-    axios
-      .get("http://13.59.190.116/api/v1/fetchTotalHits", {
-        headers: {
-          Authorization: "Bearer " + this.props.token
-        }
-      })
-      .then(res => {
-        this.setState({
-          totalHits: res.data.response.count,
-          fetchingTotalHits: false
-        });
-      });
+    // axios
+    //   .get("http://13.59.190.116/api/v1/fetchTotalHits", {
+    //     headers: {
+    //       Authorization: "Bearer " + this.props.token
+    //     }
+    //   })
+    //   .then(res => {
+    //     this.setState({
+    //       totalHits: res.data.response.count,
+    //       fetchingTotalHits: false
+    //     });
+    //   });
   }
 
   getChartData() {
@@ -147,7 +157,13 @@ class Dashboard extends Component {
                   <DataCard
                     primary
                     primaryHeading="Active Users"
-                    secondaryHeading="234"
+                    secondaryHeading={
+                      this.state.fetchingActiveUsers ? (
+                        <CircularProgress color="red" />
+                      ) : (
+                        this.state.activeUsers
+                      )
+                    }
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
