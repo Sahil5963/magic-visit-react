@@ -9,7 +9,6 @@ export const updateRecordId = id => {
 };
 
 export const updateRecord = id => {
-  console.log(id);
   return dispatch => {
     dispatch(updateRecordId(id));
   };

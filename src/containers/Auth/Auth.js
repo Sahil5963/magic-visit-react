@@ -10,16 +10,12 @@ import { ThemeProvider } from "@material-ui/styles";
 
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import InputLabel from "@material-ui/core/InputLabel";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import IconButton from "@material-ui/core/IconButton";
-import Input from "@material-ui/core/Input";
-import { makeStyles } from "@material-ui/core/styles";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
-import { Link } from "react-router-dom";
+import InputAdornment from "@material-ui/core/InputAdornment";
+
+import IconButton from "@material-ui/core/IconButton";
+
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import * as actions from "../../store/actions/index";
 import { connect } from "react-redux";
@@ -56,7 +52,6 @@ class Auth extends Component {
   };
 
   submitHandler = e => {
-    console.log("form submit");
     e.preventDefault();
 
     this.props.onAuth(
@@ -110,7 +105,6 @@ class Auth extends Component {
           type="submit"
           className={classes.SubmitButton}
           onClick={this.submitHandler}
-          // onClick={this.setRedirect}
         >
           Login
         </Button>

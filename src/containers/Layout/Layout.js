@@ -1,34 +1,25 @@
 import React from "react";
 
 import AppBar from "@material-ui/core/AppBar";
-import Divider from "@material-ui/core/Divider";
+
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import MailIcon from "@material-ui/icons/Mail";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { red } from "@material-ui/core/colors";
 import Button from "@material-ui/core/Button";
 
 import { Link } from "react-router-dom";
 
 import { connect } from "react-redux";
 
-import { Route, Switch, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import NavigationItems from "../../components/Navigation/NavigationItems/NavigationItems";
 import Icon from "@material-ui/core/Icon";
 
 import Logo from "../../components/Logo/Logo";
-
-import { createMuiTheme } from "@material-ui/core/styles";
 
 const drawerWidth = 260;
 
@@ -138,7 +129,6 @@ function Layout(props) {
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">
           <Drawer
             container={container}
@@ -150,7 +140,7 @@ function Layout(props) {
               paper: classes.drawerPaper
             }}
             ModalProps={{
-              keepMounted: true // Better open performance on mobile.
+              keepMounted: true
             }}
           >
             {drawer}

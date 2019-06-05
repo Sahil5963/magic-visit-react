@@ -3,7 +3,7 @@ import React from "react";
 // import { NavLink } from "react-router-dom";
 
 import Icon from "@material-ui/core/Icon";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 const NavItem = styled.li`
   padding: 1rem 0rem 1rem 2rem;
@@ -34,14 +34,6 @@ const navigationItem = props => {
         <Icon>home</Icon>
       </NavItemIcon>
       {props.children}
-
-      {/* <NavLink
-        activeStyle={{ color: "red" }}
-        to={props.link}
-        exact={props.exact}
-      >
-        {props.children}
-      </NavLink> */}
     </NavItem>
   );
 };

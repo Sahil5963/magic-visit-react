@@ -18,6 +18,21 @@ import InputRange from "react-input-range";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import LinearProgress from "@material-ui/core/LinearProgress";
+
+import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+
+import clsx from "clsx";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import ErrorIcon from "@material-ui/icons/Error";
+import InfoIcon from "@material-ui/icons/Info";
+import green from "@material-ui/core/colors/green";
+import amber from "@material-ui/core/colors/amber";
+import SnackbarContent from "@material-ui/core/SnackbarContent";
+import WarningIcon from "@material-ui/icons/Warning";
+import { makeStyles } from "@material-ui/core/styles";
+
 import axios from "axios";
 
 const styles = theme => ({
@@ -45,10 +60,6 @@ const styles = theme => ({
   buttons: {
     margin: "1rem 0rem"
   },
-  button: {
-    // marginRight: "1rem",
-  },
-
   submitButton: {
     marginRight: "1rem"
   },
@@ -65,6 +76,67 @@ const theme = createMuiTheme({
   }
 });
 
+const variantIcon = {
+  success: CheckCircleIcon,
+  warning: WarningIcon,
+  error: ErrorIcon,
+  info: InfoIcon
+};
+
+const useStyles1 = makeStyles(theme => ({
+  success: {
+    backgroundColor: green[600]
+  },
+  error: {
+    backgroundColor: theme.palette.error.dark
+  },
+  info: {
+    backgroundColor: theme.palette.primary.dark
+  },
+  warning: {
+    backgroundColor: amber[700]
+  },
+  icon: {
+    fontSize: 20
+  },
+  iconVariant: {
+    opacity: 0.9,
+    marginRight: theme.spacing(1)
+  },
+  message: {
+    display: "flex",
+    alignItems: "center"
+  }
+}));
+
+function MySnackbarContentWrapper(props) {
+  const classes = useStyles1();
+  const { className, message, onClose, variant, ...other } = props;
+  const Icon = variantIcon[variant];
+
+  return (
+    <SnackbarContent
+      className={clsx(classes[variant], className)}
+      ContentProps={{
+        "aria-describedby": "message-id"
+      }}
+      message={<span id="message-id">{props.message}</span>}
+      action={[
+        <IconButton
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          className={classes.close}
+          onClick={props.closeDisplayMessage}
+        >
+          <CloseIcon />
+        </IconButton>
+      ]}
+      {...other}
+    />
+  );
+}
+
 class UpdateRecord extends Component {
   state = {
     websiteUrl: "",
@@ -74,7 +146,44 @@ class UpdateRecord extends Component {
       min: 0,
       max: 50
     },
-    fetchingData: false
+    fetchingData: false,
+    submittingData: false,
+    submittingDataSuccess: false,
+    submittingDataMessage: null,
+    displayMessage: false
+  };
+
+  showDisplayMessage = () => {
+    this.setState({
+      showDisplayMessage: true
+    });
+  };
+
+  closeDisplayMessage = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    this.setState({
+      displayMessage: false
+    });
+  };
+
+  inputChangeHandler = e => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  };
+
+  onResetHandler = () => {
+    this.setState({
+      websiteUrl: "",
+      websiteHits: "",
+      rangeType: "Random",
+      rangeValue: {
+        min: 0,
+        max: 50
+      }
+    });
   };
 
   handleRangeType = value => {
@@ -86,8 +195,6 @@ class UpdateRecord extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("Did update");
-
     if (this.state.rangeType != prevState.rangeType) {
       if (this.state.rangeType == "Fixed") {
         this.setState({
@@ -117,8 +224,6 @@ class UpdateRecord extends Component {
         }
       })
       .then(res => {
-        console.log(res.data.response[0]);
-
         let rangeValue = null;
         let rangeType = null;
 
@@ -141,14 +246,6 @@ class UpdateRecord extends Component {
           fetchingData: false
         });
       });
-
-    axios
-      .get("http://13.59.190.116/api/v1/website", {
-        headers: {
-          Authorization: "Bearer " + this.props.token
-        }
-      })
-      .then(res => console.log(res));
   }
 
   inputChangeHandler = e => {
@@ -158,46 +255,66 @@ class UpdateRecord extends Component {
   };
 
   onUpdateHandler = () => {
-    this.props.history.goBack();
+    let minRange = "";
+    let maxRange = "";
 
-    // console.log("hey");
-    // let minRange = "";
-    // let maxRange = "";
+    if (this.state.rangeType == "Random") {
+      minRange = this.state.rangeValue.min;
+      maxRange = this.state.rangeValue.max;
+    } else {
+      minRange = 0;
+      maxRange = this.state.rangeValue;
+    }
 
-    // if (this.state.rangeType == "Random") {
-    //   minRange = this.state.rangeValue.min;
-    //   maxRange = this.state.rangeValue.max;
-    // } else {
-    //   minRange = 0;
-    //   maxRange = this.state.rangeValue;
-    // }
+    const updateWebsiteData = {
+      website_url: this.state.websiteUrl,
+      max_visit_time: maxRange,
+      min_visit_time: minRange,
+      total_required_hits: Number(this.state.websiteHits),
+      _method: "put"
+    };
 
-    // const addWebsiteData = {
-    //   website_url: this.state.websiteUrl,
-    //   max_visit_time: maxRange,
-    //   min_visit_time: minRange,
-    //   total_required_hits: Number(this.state.websiteHits)
-    // };
+    axios
+      .post(
+        "http://13.59.190.116/api/v1/website/" + this.props.id,
+        updateWebsiteData,
+        {
+          headers: {
+            Authorization: "Bearer " + this.props.token
+          }
+        }
+      )
+      .then(res => {
+        let status = res.data.status;
+        let message = res.data.message;
 
-    // axios
-    //   .post("http://13.59.190.116/api/v1/website", addWebsiteData, {
-    //     headers: {
-    //       Authorization: "Bearer " + this.props.token
-    //     }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   });
+        if (status == "RXSUCCESS") {
+          this.setState({
+            websiteUrl: "",
+            websiteHits: "",
+            rangeType: "Random",
+            rangeValue: {
+              min: 0,
+              max: 50
+            },
+            submittingData: false,
+            submittingDataSuccess: true,
+            submittingDataMessage: "Website Updated Succesfully",
+            displayMessage: true
+          });
 
-    // axios
-    //   .get("http://13.59.190.116/api/v1/website", {
-    //     headers: {
-    //       Authorization: "Bearer " + this.props.token
-    //     }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   });
+          setTimeout(() => {
+            this.props.history.push("/website-list");
+          }, 600);
+        } else {
+          this.setState({
+            submittingData: false,
+            submittingDataSuccess: false,
+            submittingDataMessage: message,
+            displayMessage: true
+          });
+        }
+      });
   };
 
   rangeSelectorValueChangeHandler = value => {
@@ -293,7 +410,7 @@ class UpdateRecord extends Component {
                 color="primary"
                 size="large"
                 className={(classes.button, classes.submitButton)}
-                onClick={this.onUpdateHandler}
+                onClick={() => this.onUpdateHandler()}
               >
                 Update
               </Button>
@@ -305,10 +422,34 @@ class UpdateRecord extends Component {
       );
     }
 
+    let submittingData = null;
+
+    if (this.state.submittingData) {
+      submittingData = <LinearProgress />;
+    } else {
+      submittingData = null;
+    }
+
     return (
       <ThemeProvider theme={theme}>
+        {submittingData}
         <div className={classes.root}>
           <h3 className={classes.heading}>Update Website </h3>
+          <Snackbar
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "center"
+            }}
+            open={this.state.displayMessage}
+            autoHideDuration={6000}
+            onClose={this.closeDisplayMessage}
+          >
+            <MySnackbarContentWrapper
+              closeDisplayMessage={this.closeDisplayMessage}
+              variant={this.state.submittingDataSuccess ? "success" : "error"}
+              message={this.state.submittingDataMessage}
+            />
+          </Snackbar>
           {form}
         </div>
       </ThemeProvider>
@@ -318,6 +459,7 @@ class UpdateRecord extends Component {
 
 const mapStateToProps = state => {
   return {
+    token: state.auth.token,
     id: state.updateRecord.updateId
   };
 };

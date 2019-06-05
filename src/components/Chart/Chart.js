@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import { Line } from "react-chartjs-2";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 const ChartDiv = styled.div`
   background: #fff;

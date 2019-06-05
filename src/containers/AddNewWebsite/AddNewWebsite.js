@@ -5,8 +5,6 @@ import TextField from "@material-ui/core/TextField";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 
@@ -57,9 +55,6 @@ const styles = theme => ({
   },
   buttons: {
     margin: "1rem 0rem"
-  },
-  button: {
-    // marginRight: "1rem",
   },
 
   submitButton: {
@@ -259,8 +254,6 @@ class AddNewWebsite extends Component {
       total_required_hits: Number(this.state.websiteHits)
     };
 
-    console.log("Bearer " + this.props.token);
-
     axios
       .post("http://13.59.190.116/api/v1/website", addWebsiteData, {
         headers: {
@@ -268,8 +261,6 @@ class AddNewWebsite extends Component {
         }
       })
       .then(res => {
-        console.log(res);
-
         let status = res.data.status;
         let message = res.data.message;
 

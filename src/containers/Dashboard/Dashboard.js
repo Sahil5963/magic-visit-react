@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import color from "@material-ui/core/colors/lightGreen";
 
 import DataCard from "../../components/DataCard/DataCard";
 import Chart from "../../components/Chart/Chart";
@@ -53,10 +51,6 @@ class Dashboard extends Component {
     fetchingActiveUsers: false
   };
 
-  componentWillUpdate() {
-    console.log("Component Will Update");
-  }
-
   componentDidMount() {
     const socket = io("http://13.59.190.116:3000");
 
@@ -65,13 +59,10 @@ class Dashboard extends Component {
     });
 
     socket.on("connected", function(data) {
-      console.log(data);
       socket.emit("getActiveUser", { type: "getActiveUser" });
     });
 
     socket.on("showActiveUser", data => {
-      console.log(data); //
-
       this.setState({
         activeUsers: data.visitor_count,
         fetchingActiveUsers: false
@@ -114,7 +105,16 @@ class Dashboard extends Component {
   getChartData() {
     this.setState({
       chartData: {
-        labels: ["January", "February", "March", "April", "May", "June"],
+        labels: [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August"
+        ],
         datasets: [
           {
             label: "Users",
@@ -123,7 +123,7 @@ class Dashboard extends Component {
               181045,
               153060,
               106519,
-              105162,
+              405162,
               95072,
               105162,
               95072,
@@ -134,8 +134,6 @@ class Dashboard extends Component {
             borderColor: "rgba(0, 111, 255, 1)",
             borderWidth: "4",
             pointBackgroundColor: "rgba(0, 111, 255, 1)",
-            // pointBorderColor
-            // pointBorderWidth
             pointHitRadius: "14",
             pointRadius: "4"
           }

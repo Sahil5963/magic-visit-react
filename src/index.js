@@ -9,7 +9,6 @@ import { createStore, compose, applyMiddleware, combineReducers } from "redux";
 import thunk from "redux-thunk";
 import authReducer from "./store/reducers/auth";
 import updateRecordReducer from "./store/reducers/updateRecord";
-import demoReducer from "./store/reducers/demo";
 
 const composeEnhancers =
   process.env.NODE_ENV === "development"
@@ -17,7 +16,6 @@ const composeEnhancers =
     : null;
 
 const rootReducer = combineReducers({
-  demo: demoReducer,
   auth: authReducer,
   updateRecord: updateRecordReducer
 });

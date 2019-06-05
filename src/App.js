@@ -9,10 +9,10 @@ import * as actions from "./store/actions/index";
 
 import Dashboard from "./containers/Dashboard/Dashboard";
 import PushWebsiteForm from "./containers/PushWebsiteForm/PushWebsiteForm";
-import WebsiteList from "./containers/WebsiteList/WebsiteList.1";
+import WebsiteList from "./containers/WebsiteList/WebsiteList";
 import Logout from "./containers/Auth/Logout/Logout";
 import AddNewWebsite from "./containers/AddNewWebsite/AddNewWebsite";
-import UpdateRecord from "./containers/UpdateRecord/UpdateRecord1";
+import UpdateRecord from "./containers/UpdateRecord/UpdateRecord";
 
 class App extends Component {
   componentDidMount() {

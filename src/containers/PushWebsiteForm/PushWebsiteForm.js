@@ -2,11 +2,6 @@ import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 
@@ -17,7 +12,6 @@ import InputRange from "react-input-range";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import axios from "axios";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -59,9 +53,6 @@ const styles = theme => ({
   },
   buttons: {
     margin: "1rem 0rem"
-  },
-  button: {
-    // marginRight: "1rem",
   },
 
   submitButton: {
@@ -212,8 +203,6 @@ class PushWebsiteForm extends Component {
         visiting_time: this.state.totalVisitTime
       };
 
-      console.log({ response: { ...pushWebsite } });
-
       socket.emit("sendPushWebsite", { response: { ...pushWebsite } });
 
       this.setState({
@@ -223,11 +212,7 @@ class PushWebsiteForm extends Component {
         submittingData: false
       });
 
-      console.log({ response: { ...pushWebsite } });
-
       this.onResetHandler();
-
-      console.log({ response: { ...pushWebsite } });
     } else if (this.state.websiteUrl == "") {
       this.setState({
         submittingDataSuccess: false,

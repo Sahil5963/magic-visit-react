@@ -67,8 +67,8 @@ const logo = props => {
             id="Visit"
             transform="translate(187.826 69.449)"
             fill={color2}
-            font-size="22"
-            font-family="Nunito-Regular, Nunito"
+            fontSize="22"
+            fontFamily="Nunito-Regular, Nunito"
           >
             <tspan x="0" y="0">
               Visit
@@ -78,9 +78,9 @@ const logo = props => {
             id="Magic"
             transform="translate(122 69.449)"
             fill={color1}
-            font-size="22"
-            font-family="Nunito-Bold, Nunito"
-            font-weight="700"
+            fontSize="22"
+            fontFamily="Nunito-Bold, Nunito"
+            fontWeight="700"
           >
             <tspan x="0" y="0">
               Magic
