@@ -84,8 +84,7 @@ class UpdateRecord extends Component {
       };
     });
   };
-
-  componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {
     if (this.state.rangeType != prevState.rangeType) {
       if (this.state.rangeType == "Fixed") {
         this.setState({

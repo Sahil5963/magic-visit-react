@@ -13,6 +13,7 @@ import WebsiteList from "./containers/WebsiteList/WebsiteList";
 import Logout from "./containers/Auth/Logout/Logout";
 import AddNewWebsite from "./containers/AddNewWebsite/AddNewWebsite";
 import UpdateRecord from "./containers/UpdateRecord/UpdateRecord";
+import Setting from './containers/Setting/Setting'
 
 class App extends Component {
   componentDidMount() {
@@ -38,6 +39,7 @@ class App extends Component {
               <Route path="/logout" component={Logout} />
               <Route path="/add-new-website" component={AddNewWebsite} />
               <Route path="/update-record" component={UpdateRecord} />
+              <Route path="/setting" component={Setting} />
 
               <Redirect to="/" />
             </Switch>

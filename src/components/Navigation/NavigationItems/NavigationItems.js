@@ -149,6 +149,9 @@ function NavigationItems(props) {
           root: classes.listItem,
           selected: classes.selectedListItem
         }}
+        selected={props.location.pathname == "/setting"}
+        component={Link}
+        to="/setting"
       >
         <ListItemIcon className={classes.listItemIcon}>
           <Icon>settings</Icon>

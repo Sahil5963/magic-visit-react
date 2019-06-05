@@ -5,11 +5,8 @@ import TextField from "@material-ui/core/TextField";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
-import { Redirect, withRouter } from "react-router-dom";
 
 import "react-input-range/lib/css/index.css";
 
@@ -18,6 +15,7 @@ import InputRange from "react-input-range";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import axios from "axios";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -32,8 +30,6 @@ import amber from "@material-ui/core/colors/amber";
 import SnackbarContent from "@material-ui/core/SnackbarContent";
 import WarningIcon from "@material-ui/icons/Warning";
 import { makeStyles } from "@material-ui/core/styles";
-
-import axios from "axios";
 
 const styles = theme => ({
   root: {
@@ -60,6 +56,7 @@ const styles = theme => ({
   buttons: {
     margin: "1rem 0rem"
   },
+
   submitButton: {
     marginRight: "1rem"
   },
@@ -137,7 +134,7 @@ function MySnackbarContentWrapper(props) {
   );
 }
 
-class UpdateRecord extends Component {
+class Setting extends Component {
   state = {
     websiteUrl: "",
     websiteHits: "",
@@ -146,44 +143,12 @@ class UpdateRecord extends Component {
       min: 0,
       max: 50
     },
-    fetchingData: false,
     submittingData: false,
     submittingDataSuccess: false,
     submittingDataMessage: null,
-    displayMessage: false
-  };
-
-  showDisplayMessage = () => {
-    this.setState({
-      showDisplayMessage: true
-    });
-  };
-
-  closeDisplayMessage = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    this.setState({
-      displayMessage: false
-    });
-  };
-
-  inputChangeHandler = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
-  };
-
-  onResetHandler = () => {
-    this.setState({
-      websiteUrl: "",
-      websiteHits: "",
-      rangeType: "Random",
-      rangeValue: {
-        min: 0,
-        max: 50
-      }
-    });
+    displayMessage: false,
+    urlValid: true,
+    urlValidMessage: null
   };
 
   handleRangeType = value => {
@@ -212,41 +177,20 @@ class UpdateRecord extends Component {
     }
   }
 
-  componentDidMount() {
+  showDisplayMessage = () => {
     this.setState({
-      fetchingData: true
+      showDisplayMessage: true
     });
+  };
 
-    axios
-      .get("http://13.59.190.116/api/v1/website/" + this.props.id, {
-        headers: {
-          Authorization: "Bearer " + this.props.token
-        }
-      })
-      .then(res => {
-        let rangeValue = null;
-        let rangeType = null;
-
-        if (res.data.response[0].min_visit_time == 1) {
-          rangeValue = res.data.response[0].max_visit_time;
-          rangeType = "Fixed";
-        } else {
-          rangeValue = {
-            min: res.data.response[0].min_visit_time,
-            max: res.data.response[0].max_visit_time
-          };
-          rangeType = "Random";
-        }
-
-        this.setState({
-          websiteUrl: res.data.response[0].website_url,
-          websiteHits: res.data.response[0].total_required_hits,
-          rangeType: rangeType,
-          rangeValue: rangeValue,
-          fetchingData: false
-        });
-      });
-  }
+  closeDisplayMessage = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    this.setState({
+      displayMessage: false
+    });
+  };
 
   inputChangeHandler = e => {
     this.setState({
@@ -254,7 +198,44 @@ class UpdateRecord extends Component {
     });
   };
 
-  onUpdateHandler = () => {
+  inputUrlChangeHandler = e => {
+    const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+    const regex = new RegExp(expression);
+
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+
+    if (e.target.value.match(regex)) {
+      this.setState({
+        urlValid: true,
+        urlValidMessage: "URL is valid"
+      });
+    } else {
+      this.setState({
+        urlValid: false,
+        urlValidMessage: "Enter Valid URL"
+      });
+    }
+  };
+
+  onResetHandler = () => {
+    this.setState({
+      websiteUrl: "",
+      websiteHits: "",
+      rangeType: "Random",
+      rangeValue: {
+        min: 0,
+        max: 50
+      }
+    });
+  };
+
+  onSubmitHandler = () => {
+    this.setState({
+      submittingData: true
+    });
+
     let minRange = "";
     let maxRange = "";
 
@@ -266,24 +247,19 @@ class UpdateRecord extends Component {
       maxRange = this.state.rangeValue;
     }
 
-    const updateWebsiteData = {
+    const addWebsiteData = {
       website_url: this.state.websiteUrl,
       max_visit_time: maxRange,
       min_visit_time: minRange,
-      total_required_hits: Number(this.state.websiteHits),
-      _method: "put"
+      total_required_hits: Number(this.state.websiteHits)
     };
 
     axios
-      .post(
-        "http://13.59.190.116/api/v1/website/" + this.props.id,
-        updateWebsiteData,
-        {
-          headers: {
-            Authorization: "Bearer " + this.props.token
-          }
+      .post("http://13.59.190.116/api/v1/website", addWebsiteData, {
+        headers: {
+          Authorization: "Bearer " + this.props.token
         }
-      )
+      })
       .then(res => {
         let status = res.data.status;
         let message = res.data.message;
@@ -299,13 +275,9 @@ class UpdateRecord extends Component {
             },
             submittingData: false,
             submittingDataSuccess: true,
-            submittingDataMessage: "Website Updated Succesfully",
+            submittingDataMessage: message,
             displayMessage: true
           });
-
-          setTimeout(() => {
-            this.props.history.push("/website-list");
-          }, 600);
         } else {
           this.setState({
             submittingData: false,
@@ -329,99 +301,6 @@ class UpdateRecord extends Component {
   render() {
     const { classes } = this.props;
 
-    let form = null;
-
-    if (this.state.fetchingData) {
-      form = <LinearProgress />;
-    } else {
-      form = (
-        <form className={classes.formContainer} noValidate autoComplete="off">
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <TextField
-                id="websiteUrl"
-                label="Enter Website URL"
-                className={classes.textField}
-                type="text"
-                name="websiteUrl"
-                margin="normal"
-                variant="outlined"
-                fullWidth
-                margin="none"
-                value={this.state.websiteUrl}
-                onChange={this.inputChangeHandler}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                id="websiteHits"
-                label="Enter Total Website Hits"
-                className={classes.textField}
-                type="text"
-                name="websiteHits"
-                margin="normal"
-                variant="outlined"
-                fullWidth
-                margin="none"
-                value={this.state.websiteHits}
-                onChange={this.inputChangeHandler}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <label className={classes.label}>Select timing :</label>
-
-              <RadioGroup
-                aria-label="position"
-                name="position"
-                value={this.state.rangeType}
-                onChange={event => this.handleRangeType(event.target.value)}
-                row
-              >
-                <FormControlLabel
-                  value="Random"
-                  control={<Radio color="primary" />}
-                  label="Random"
-                  labelPlacement="end"
-                />
-                <FormControlLabel
-                  value="Fixed"
-                  control={<Radio color="primary" />}
-                  label="Fixed"
-                  labelPlacement="end"
-                />
-              </RadioGroup>
-            </Grid>
-            <Grid item xs={12} className={classes.rangeSection}>
-              <label className={classes.label}>Select Range :</label>
-              <div className={classes.rangeSelector}>
-                <InputRange
-                  maxValue={600}
-                  minValue={0}
-                  value={this.state.rangeValue}
-                  onChange={value =>
-                    this.rangeSelectorValueChangeHandler(value)
-                  }
-                />
-              </div>
-            </Grid>
-            <Grid item xs={12} className={classes.buttons}>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                className={(classes.button, classes.submitButton)}
-                onClick={() => this.onUpdateHandler()}
-              >
-                Update
-              </Button>
-            </Grid>
-            <Grid item xs={3} />
-            <Grid item xs={3} />
-          </Grid>
-        </form>
-      );
-    }
-
     let submittingData = null;
 
     if (this.state.submittingData) {
@@ -433,8 +312,9 @@ class UpdateRecord extends Component {
     return (
       <ThemeProvider theme={theme}>
         {submittingData}
+
         <div className={classes.root}>
-          <h3 className={classes.heading}>Update Website </h3>
+          <h3 className={classes.heading}>Change Your Password </h3>
           <Snackbar
             anchorOrigin={{
               vertical: "top",
@@ -450,7 +330,66 @@ class UpdateRecord extends Component {
               message={this.state.submittingDataMessage}
             />
           </Snackbar>
-          {form}
+          <form className={classes.formContainer} noValidate autoComplete="off">
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <TextField
+                  id="password"
+                  error={!this.state.urlValid}
+                  helperText={this.state.urlValidMessage}
+                  label="Enter New Password"
+                  className={classes.textField}
+                  type="password"
+                  name="websiteUrl"
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                  margin="none"
+                  value={this.state.websiteUrl}
+                  onChange={this.inputUrlChangeHandler}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  id="password"
+                  error={!this.state.urlValid}
+                  helperText={this.state.urlValidMessage}
+                  label="Confirm Password"
+                  className={classes.textField}
+                  type="password"
+                  name="websiteUrl"
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                  margin="none"
+                  value={this.state.websiteUrl}
+                  onChange={this.inputUrlChangeHandler}
+                />
+              </Grid>
+
+              <Grid item xs={12} className={classes.buttons}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  className={(classes.button, classes.submitButton)}
+                  onClick={this.onSubmitHandler}
+                >
+                  Submit
+                </Button>
+                <Button
+                  variant="contained"
+                  className={classes.button}
+                  size="large"
+                  onClick={() => this.onResetHandler()}
+                >
+                  Reset
+                </Button>
+              </Grid>
+              <Grid item xs={3} />
+              <Grid item xs={3} />
+            </Grid>
+          </form>
         </div>
       </ThemeProvider>
     );
@@ -459,11 +398,8 @@ class UpdateRecord extends Component {
 
 const mapStateToProps = state => {
   return {
-    token: state.auth.token,
-    id: state.updateRecord.updateId
+    token: state.auth.token
   };
 };
 
-export default withRouter(
-  withStyles(styles)(connect(mapStateToProps)(UpdateRecord))
-);
+export default withStyles(styles)(connect(mapStateToProps)(Setting));
