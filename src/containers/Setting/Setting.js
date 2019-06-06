@@ -31,6 +31,11 @@ import SnackbarContent from "@material-ui/core/SnackbarContent";
 import WarningIcon from "@material-ui/icons/Warning";
 import { makeStyles } from "@material-ui/core/styles";
 
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+
+import InputAdornment from "@material-ui/core/InputAdornment";
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -136,46 +141,16 @@ function MySnackbarContentWrapper(props) {
 
 class Setting extends Component {
   state = {
-    websiteUrl: "",
-    websiteHits: "",
-    rangeType: "Random",
-    rangeValue: {
-      min: 0,
-      max: 50
-    },
+    password: null,
+    confirmPassword: null,
     submittingData: false,
     submittingDataSuccess: false,
     submittingDataMessage: null,
     displayMessage: false,
-    urlValid: true,
-    urlValidMessage: null
+    passwordMatch: true,
+    passwordMessage: null,
+    showPassword: false
   };
-
-  handleRangeType = value => {
-    this.setState(prevState => {
-      return {
-        rangeType: value
-      };
-    });
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.rangeType != prevState.rangeType) {
-      if (this.state.rangeType == "Fixed") {
-        this.setState({
-          rangeValue: 60
-        });
-      } else {
-        this.setState({
-          rangeValue: {
-            ...this.state.rangeValue,
-            min: 0,
-            max: 50
-          }
-        });
-      }
-    }
-  }
 
   showDisplayMessage = () => {
     this.setState({
@@ -198,102 +173,42 @@ class Setting extends Component {
     });
   };
 
-  inputUrlChangeHandler = e => {
-    const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-    const regex = new RegExp(expression);
-
+  inputConfirmPasswordHandler = e => {
     this.setState({
-      [e.target.name]: e.target.value
+      confirmPassword: e.target.value
     });
 
-    if (e.target.value.match(regex)) {
+    if (e.target.value != this.state.password) {
       this.setState({
-        urlValid: true,
-        urlValidMessage: "URL is valid"
+        passwordMatch: false,
+        passwordMessage: "Password Not Matched"
       });
     } else {
       this.setState({
-        urlValid: false,
-        urlValidMessage: "Enter Valid URL"
+        passwordMatch: true,
+        passwordMessage: "Password Matched"
       });
     }
   };
 
   onResetHandler = () => {
     this.setState({
-      websiteUrl: "",
-      websiteHits: "",
-      rangeType: "Random",
-      rangeValue: {
-        min: 0,
-        max: 50
-      }
+      password: "",
+      confirmPassword: "",
+      submittingData: false,
+      submittingDataSuccess: false,
+      submittingDataMessage: null,
+      displayMessage: false,
+      passwordMatch: true,
+      passwordMessage: null,
+      showPassword: false
     });
   };
 
-  onSubmitHandler = () => {
-    this.setState({
-      submittingData: true
-    });
-
-    let minRange = "";
-    let maxRange = "";
-
-    if (this.state.rangeType == "Random") {
-      minRange = this.state.rangeValue.min;
-      maxRange = this.state.rangeValue.max;
-    } else {
-      minRange = 0;
-      maxRange = this.state.rangeValue;
-    }
-
-    const addWebsiteData = {
-      website_url: this.state.websiteUrl,
-      max_visit_time: maxRange,
-      min_visit_time: minRange,
-      total_required_hits: Number(this.state.websiteHits)
-    };
-
-    axios
-      .post("http://13.59.190.116/api/v1/website", addWebsiteData, {
-        headers: {
-          Authorization: "Bearer " + this.props.token
-        }
-      })
-      .then(res => {
-        let status = res.data.status;
-        let message = res.data.message;
-
-        if (status == "RXSUCCESS") {
-          this.setState({
-            websiteUrl: "",
-            websiteHits: "",
-            rangeType: "Random",
-            rangeValue: {
-              min: 0,
-              max: 50
-            },
-            submittingData: false,
-            submittingDataSuccess: true,
-            submittingDataMessage: message,
-            displayMessage: true
-          });
-        } else {
-          this.setState({
-            submittingData: false,
-            submittingDataSuccess: false,
-            submittingDataMessage: message,
-            displayMessage: true
-          });
-        }
-      });
-  };
-
-  rangeSelectorValueChangeHandler = value => {
+  handleClickShowPassword = () => {
     this.setState(prevState => {
       return {
-        ...this.state,
-        rangeValue: value
+        showPassword: !prevState.showPassword
       };
     });
   };
@@ -335,35 +250,48 @@ class Setting extends Component {
               <Grid item xs={12}>
                 <TextField
                   id="password"
-                  error={!this.state.urlValid}
-                  helperText={this.state.urlValidMessage}
-                  label="Enter New Password"
-                  className={classes.textField}
-                  type="password"
-                  name="websiteUrl"
-                  margin="normal"
                   variant="outlined"
+                  name="password"
+                  label="Password"
                   fullWidth
-                  margin="none"
-                  value={this.state.websiteUrl}
-                  onChange={this.inputUrlChangeHandler}
+                  className={classes.InputField}
+                  type={this.state.showPassword ? "text" : "password"}
+                  value={this.state.password}
+                  onChange={e => this.inputChangeHandler(e)}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          edge="end"
+                          aria-label="Toggle password visibility"
+                          onClick={e => this.handleClickShowPassword(e)}
+                        >
+                          {this.state.showPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  id="password"
-                  error={!this.state.urlValid}
-                  helperText={this.state.urlValidMessage}
+                  id="confirmPassword"
+                  error={!this.state.passwordMatch}
+                  helperText={this.state.passwordMessage}
                   label="Confirm Password"
                   className={classes.textField}
                   type="password"
-                  name="websiteUrl"
+                  name="confirmPassword"
                   margin="normal"
                   variant="outlined"
                   fullWidth
                   margin="none"
-                  value={this.state.websiteUrl}
-                  onChange={this.inputUrlChangeHandler}
+                  value={this.state.confirmPassword}
+                  onChange={e => this.inputConfirmPasswordHandler(e)}
                 />
               </Grid>
 
